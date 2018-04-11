@@ -5,8 +5,8 @@ import java.util.Locale;
 
 public class TransactionsReadByAmount extends QueriesDB {
 
-    Double start;
-    Double finish;
+    double start;
+    double finish;
 
     @Override
     protected void readUserInput() {
@@ -20,7 +20,9 @@ public class TransactionsReadByAmount extends QueriesDB {
             finish = scanner.nextDouble();
             scanner.nextLine();
         } catch (InputMismatchException e) {
-            System.out.println("Book: wrong type input");
+            scanner.nextLine();
+            start = -1;
+            System.out.println("Amount: wrong type input");
         }
     }
 

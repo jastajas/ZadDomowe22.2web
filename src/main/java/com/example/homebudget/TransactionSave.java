@@ -61,7 +61,6 @@ public class TransactionSave extends QueriesDB {
                 !transaction.getDescription().equals("") && transaction.getDescription() != null &&
                 transaction.getAmount() >= 0) {
             budgetDao.save(transaction);
-            budgetDao.closeConnection();
         } else {
             throw new UncorrectTransactionException();
         }

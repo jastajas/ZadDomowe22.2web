@@ -40,6 +40,8 @@ public class TransactionsReadByDate extends QueriesDB {
             finish = (Date.valueOf(tempDate));
 
         } catch (InputMismatchException e) {
+            scanner.nextLine();
+
             System.out.println("TransactionDate: wrong type input");
         }
     }

@@ -28,13 +28,15 @@ public class TransactionsReadByType extends QueriesDB {
                     scanner.nextLine();
             }
         } catch (InputMismatchException e) {
+            scanner.nextLine();
+            transaction.setType(null);
             System.out.println("Transaction: wrong type input");
         }
     }
 
     @Override
     protected void queryIntoDatabase() {
-        if (!transaction.getType().equals("") && transaction.getType() != null) {
+        if (transaction.getType() != null) {
             transactions = budgetDao.readByType(transaction.getType());
         } else {
             throw new UncorrectTypeException();

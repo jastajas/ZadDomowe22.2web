@@ -1,6 +1,5 @@
 package com.example.homebudget;
 
-import javax.swing.text.html.Option;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -54,6 +53,7 @@ public class ApllicationController {
 
                 runOption(mainController);
             } catch (InputMismatchException a) {
+                sc.nextLine();
                 mainController = 0;
                 System.out.println("Wprowadzono niewłaściwy typ opcji.");
             }
