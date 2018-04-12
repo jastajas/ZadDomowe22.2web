@@ -1,10 +1,13 @@
 package com.example.homebudget;
 
+import org.springframework.stereotype.Repository;
+
 import java.sql.Date;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class BudgetDao {
 
     private static final String URL = "jdbc:mysql://localhost:3306/financemanager?characterEncoding=utf8";
@@ -49,6 +52,54 @@ public class BudgetDao {
         }
     }
 
+		public double balanceIncome() {
+
+        final String sql = "SELECT SUM(amount) FROM home_budget WHERE type = 'Przychód';";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            ResultSet result = ps.executeQuery();
+		
+            return result.getDouble("SUM(amount)");
+        } catch (SQLException e) {
+            System.out.println("Read by type: not executed");
+        }
+        return 0;
+    }
+	
+			public double balanceExpenditure() {
+
+        final String sql = "SELECT SUM(amount) FROM home_budget WHERE type = 'Wydatek';";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            ResultSet result = ps.executeQuery();
+		
+            return result.getDouble("SUM(amount)");
+        } catch (SQLException e) {
+            System.out.println("Read by type: not executed");
+        }
+        return 0;
+    }
+	
+	public List<Transaction> readAll() {
+
+        final String sql = "SELECT * FROM home_budget;";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            ResultSet result = ps.executeQuery();
+
+            return resultList(result);
+        } catch (SQLException e) {
+            System.out.println("Read by type: not executed");
+        }
+        return null;
+    }
+	
     public List<Transaction> readByType(String type) {
 
         final String sql = "SELECT * FROM home_budget WHERE type = ? ;";
@@ -84,7 +135,7 @@ public class BudgetDao {
         return null;
     }
 
-    public List<Transaction> readByAmount(Double amountStart, Double amountFinish) {
+    public List<Transaction> readByAmount(double amountStart, double amountFinish) {
 
         final String sql = "SELECT * FROM home_budget WHERE amount > ? AND amount < ? ;";
 
@@ -117,6 +168,4 @@ public class BudgetDao {
         }
         return transactions;
     }
-
-
 }

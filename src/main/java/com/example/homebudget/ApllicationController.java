@@ -1,66 +1,55 @@
 package com.example.homebudget;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller
 public class ApllicationController {
 
-    private Scanner sc;
+    private BudgetDao bdao;
 
-    public ApllicationController() {
-        sc = new Scanner(System.in);
+    public ApllicationController(BudgetDao budgetDao) {
+        bdao = budgetDao;
     }
 
-    private void showOption() {
-        UserOption[] userOptions = UserOption.values();
-        for (int i = 0; i < userOptions.length; i++) {
-            System.out.println(i + " - " + userOptions[i]);
+
+    @RequestMapping("/main")
+    public String showTransactionList(Model model, @RequestParam(required = false) String param1,
+                                      @RequestParam(required = false) String param2, @RequestParam(required = false) String param3) {
+
+        List<Transaction> transactions = new ArrayList<>();
+        if (param3 == null) {
+            transactions = bdao.readAll();
+        } else if (param3.equals("byType")) {
+            transactions = bdao.readByType(param1);
+        } else if (param3.equals("byDate")) {
+            transactions = bdao.readByDate(Date.valueOf(param1), Date.valueOf(param2));
+        } else if (param3.equals("byAmount")) {
+            transactions = bdao.readByAmount(Double.valueOf(param1), Double.valueOf(param2));
         }
-    }
+        TransactionType[] transactionTypes = TransactionType.values();
 
-    private void runOption(int option) {
-        switch (option) {
-            case 0:
-                UserOption.SAVE_TRANSACTION.getQueriesDB().run();
-                break;
-            case 1:
-                UserOption.READ_TRANSACTIONS_BY_TYPE.getQueriesDB().run();
-                break;
-            case 2:
-                UserOption.READ_TRANSACTIONS_BY_DATE.getQueriesDB().run();
-                break;
-            case 3:
-                UserOption.READ_TRANSACTIONS_BY_AMOUNT.getQueriesDB().run();
-            default:
-                break;
+        if (!transactions.isEmpty()) {
+            model.addAttribute("newTransaction", new Transaction());
+            model.addAttribute("transactionTypes", transactionTypes);
+            model.addAttribute("transactions", transactions);
         }
+        return "index";
     }
 
+    @PostMapping("/addTransaction")
+    public String showTransactionList(Model model, Transaction transaction) {
 
-    public void runApp() {
-        System.out.println("WITAJ !");
-        int mainController = 0;
-
-        do {
-            showOption();
-            System.out.println("Wybierz nr opcji: ");
-            try {
-                mainController = sc.nextInt();
-
-                if (mainController < 0 || mainController > 4) {
-                    throw new InputMismatchException();
-                }
-
-                runOption(mainController);
-            } catch (InputMismatchException a) {
-                sc.nextLine();
-                mainController = 0;
-                System.out.println("Wprowadzono niewłaściwy typ opcji.");
-            }
-
-        } while (mainController != 4);
-
-        System.out.println("Dziękujemy za skorzystanie z aplikacji!");
-        System.out.println("Do zobaczenia!");
+        if (transaction != null) {
+            bdao.save(transaction);
+        }
+        return "redirect:/main";
     }
 }

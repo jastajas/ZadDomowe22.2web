@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Housing Cooperative List</title>
+    <link rel="stylesheet" href="regStyle.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+</head>
+<body class="mainPart">
+<h1>HOME BUDGET</h1>
+<div style="margin: auto;">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link add_button" data-toggle="collapse" data-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">Dodaj transakcję
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
+            <form class="card-body allform" method="post" action="/addTransaction" th:object="${newTransaction}">
+                <h1>Dodaj transakcję</h1><br/>
+                <div class="nameDiv">
+                    <label>Typ transakcji</label>
+                    <select name="type" th:field="*{type}" required>
+                        placeholder="Wybierz..."
+                        <option class="defaultProvince" value="" selected data-default>Wybierz...</option>
+                        <option th:each="transType : ${transactionTypes}" th:value="${transType.toString()}"
+                                th:text="${transType.toString()}"></option>
+                    </select>
+                </div>
+                <div class="nameDiv">
+                    <label>Opis transakcji</label>
+                    <input class="nameInput" type="text" placeholder="Wpisz krótki opis transakcji" required
+                           th:field="*{description}">
+                </div>
+                </br>
+                <div>
+                    <label>Kwota transakcji</label>
+                    <input type="text" pattern="[0-9]{1,}.[0-9]{0,2}" required th:field="*{amount}">
+                </div>
+
+                </br>
+                <div>
+                    <label>Data transakcji</label>
+                    <input type="date" required th:field="*{date}">
+                </div>
+                </br>
+
+                <div>
+                    <input type="submit" value="Dodaj">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <form method="get" action="/main">
+            <div>
+                <h3>Filtruj po typie transakcji</h3>
+                <div>
+                    <select name="param1" required>
+                        <option class="defaultProvince" value="" selected data-default>Wybierz...</option>
+                        <option th:each="transType : ${transactionTypes}" th:value="${transType.toString()}"
+                                th:text="${transType.toString()}"></option>
+                    </select>
+                    <input hidden type="text" name="param3" value="byType">
+                </div>
+            </div>
+            </br>
+            <div>
+                <input type="submit" value="Filtruj">
+            </div>
+        </form>
+
+        <form method="get" action="/main">
+            <div class="provinceDiv">
+                <h3>Filtruj po dacie transakcji</h3>
+                <div>
+                    <label>Od</label>
+                    <input type="date" name="param1" required>
+                </div>
+                <div>
+                    <label>Do</label>
+                    <input type="date" name="param2" required>
+                </div>
+                <input hidden type="text" name="param3" value="byDate">
+            </div>
+            <div>
+                <input type="submit" value="Filtruj">
+            </div>
+        </form>
+
+        <form method="get" action="/main">
+            <div>
+                <h3>Filtruj po kwocie transakcji</h3>
+                <div>
+                    <label>Od</label>
+                    <input type="text" name="param1" required>
+                </div>
+                <div>
+                    <label>Do</label>
+                    <input type="text" name="param2" required>
+                </div>
+                <input hidden type="text" name="param3" value="byAmount">
+            </div>
+            <div>
+                <input type="submit" value="Filtruj">
+            </div>
+        </form>
+    </div>
+    <div>
+        <h2>Zestawienie transakcji</h2>
+        <table class="tb">
+            <tr class="tb">
+                <th class="tb">ID</th>
+                <th class="tb">Typ</th>
+                <th class="tb">Opis</th>
+                <th class="tb">Kwota</th>
+                <th class="tb">Data</th>
+            </tr>
+            <tr class="tb" th:each="trans : ${transactions}">
+                <td class="tb" th:text="${trans.getId()}"></td>
+                <td class="tb" th:text="${trans.getType()}"></td>
+                <td class="tb" th:text="${trans.getDescription()}"></td>
+                <td class="tb" th:text="${trans.getAmount()}"></td>
+                <td class="tb" th:text="${trans.getDate()}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>
